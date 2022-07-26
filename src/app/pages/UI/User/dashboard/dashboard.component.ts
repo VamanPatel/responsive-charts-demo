@@ -19,7 +19,7 @@ export class DashboardComponent implements OnInit {
   public barChartLegend = true;
   public barChartData: any[] = [];
   barChart!: Chart;
-  barChartsLabel: any[] = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'July'];
+  barChartsLabel: any[] = [];
 
   public pieChartOptions!: ChartOptions;
   public pieChartData: any[] = [];
@@ -39,19 +39,80 @@ export class DashboardComponent implements OnInit {
   ];
   lineChart!: Chart;
 
+  barChartValues: any[] = [];
+  pieChartValues: any[] = [];
+  lineChartValues: any[] = [];
+
   constructor(private api: ApiService) {
     /* --------------------------------- to used all the charts in angular -------------------------------- */
     Chart.register(...registerables);
   }
 
   ngOnInit(): void {
-    this.setBarChart();
-    this.setPieChart();
-    this.setLineChart();
+    this.getBarChartData();
+    this.getLineChartData();
+    this.getPieChartData();
+  }
+
+  /* ----------------------------------- getting bar chart data from api ---------------------------------- */
+  getBarChartData() {
+    this.api.getBarData().subscribe(
+      (res) => {
+        console.log(res);
+
+        if (res) {
+          const data = res.map((i) => i.value);
+          this.barChartsLabel = res.map((j) => j.month);
+          this.setBarChart(data);
+          this.barChartValues = res;
+        }
+      },
+      (err) => {
+        console.log(err);
+      }
+    );
+  }
+
+  /* ----------------------------------- getting pie chart data from api ---------------------------------- */
+  getPieChartData() {
+    this.api.getPieData().subscribe(
+      (res) => {
+        console.log(res);
+
+        if (res) {
+          const data = res.map((i) => i.value);
+          this.pieChartsLabel = res.map((j) => j.color);
+          this.setPieChart(data);
+          this.pieChartValues = res;
+        }
+      },
+      (err) => {
+        console.log(err);
+      }
+    );
+  }
+
+  /* ---------------------------------- getting line chart data from api ---------------------------------- */
+  getLineChartData() {
+    this.api.getLineData().subscribe(
+      (res) => {
+        console.log(res);
+
+        if (res) {
+          const data = res.map((i) => i.value);
+          this.lineChartsLabel = res.map((j) => j.month);
+          this.setLineChart(data);
+          this.lineChartValues = res;
+        }
+      },
+      (err) => {
+        console.log(err);
+      }
+    );
   }
 
   /* ------------------------------------------ bar chart config ------------------------------------------ */
-  setBarChart() {
+  setBarChart(data: any) {
     this.barChartOptions = {
       responsive: true,
       plugins: {
@@ -63,7 +124,7 @@ export class DashboardComponent implements OnInit {
     this.barChartData = [
       {
         label: 'Bar Chart',
-        data: [65, 59, 80, 81, 56, 43, 40],
+        data: data,
         backgroundColor: [
           'rgba(255, 99, 132, 0.2)',
           'rgba(255, 159, 64, 0.2)',
@@ -99,7 +160,7 @@ export class DashboardComponent implements OnInit {
   }
 
   /* ------------------------------------------- pie chat config ------------------------------------------ */
-  setPieChart() {
+  setPieChart(data: any) {
     this.pieChartOptions = {
       responsive: true,
       plugins: {
@@ -112,7 +173,7 @@ export class DashboardComponent implements OnInit {
     this.pieChartData = [
       {
         label: 'Pie Chart',
-        data: [300, 50, 100, 236],
+        data: data,
         backgroundColor: [
           'rgb(255, 99, 132)',
           'rgb(54, 162, 235)',
@@ -134,7 +195,7 @@ export class DashboardComponent implements OnInit {
     myChart.update();
   }
 
-  setLineChart() {
+  setLineChart(data: any) {
     this.lineChartOptions = {
       responsive: true,
     };
@@ -142,7 +203,7 @@ export class DashboardComponent implements OnInit {
     this.lineChartData = [
       {
         label: 'Line Chart',
-        data: [65, 59, 80, 81, 56, 55, 40],
+        data: data,
         fill: false,
         borderColor: 'rgb(75, 192, 192)',
         tension: 0.1,
@@ -161,50 +222,15 @@ export class DashboardComponent implements OnInit {
     myChart.update();
   }
 
+  /* ------------------------------------------------------------------------------------------------------ */
+  /*                                    exporting all the data into excel                                   */
+  /* ------------------------------------------------------------------------------------------------------ */
+
   exportBarData() {
     this.api.showHideSpinner = true;
 
     setTimeout(() => {
-      this.api.exportExcelData(
-        [
-          {
-            id: 1,
-            month: 'Jan',
-            value: 65,
-          },
-          {
-            id: 2,
-            month: 'Feb',
-            value: 59,
-          },
-          {
-            id: 3,
-            month: 'Mar',
-            value: 80,
-          },
-          {
-            id: 4,
-            month: 'Apr',
-            value: 81,
-          },
-          {
-            id: 5,
-            month: 'May',
-            value: 56,
-          },
-          {
-            id: 6,
-            month: 'Jun',
-            value: 43,
-          },
-          {
-            id: 7,
-            month: 'Jul',
-            value: 40,
-          },
-        ],
-        'BarChartData'
-      );
+      this.api.exportExcelData(this.barChartValues, 'BarChartData');
 
       this.api.showHideSpinner = false;
     }, 1000);
@@ -214,79 +240,17 @@ export class DashboardComponent implements OnInit {
     this.api.showHideSpinner = true;
 
     setTimeout(() => {
-      this.api.exportExcelData(
-        [
-          {
-            id: 1,
-            color: 'Red',
-            value: 300,
-          },
-          {
-            id: 2,
-            color: 'Blue',
-            value: 50,
-          },
-          {
-            id: 3,
-            color: 'Yellow',
-            value: 100,
-          },
-          {
-            id: 4,
-            color: 'DarkBlue',
-            value: 236,
-          },
-        ],
-        'PieChartData'
-      );
+      this.api.exportExcelData(this.pieChartValues, 'PieChartData');
 
       this.api.showHideSpinner = false;
     }, 1000);
   }
+
   exportLineData() {
     this.api.showHideSpinner = true;
 
     setTimeout(() => {
-      this.api.exportExcelData(
-        [
-          {
-            id: 1,
-            month: 'Jan',
-            value: 65,
-          },
-          {
-            id: 2,
-            month: 'Feb',
-            value: 59,
-          },
-          {
-            id: 3,
-            month: 'Mar',
-            value: 80,
-          },
-          {
-            id: 4,
-            month: 'Apr',
-            value: 81,
-          },
-          {
-            id: 5,
-            month: 'May',
-            value: 56,
-          },
-          {
-            id: 6,
-            month: 'Jun',
-            value: 55,
-          },
-          {
-            id: 7,
-            month: 'Jun',
-            value: 40,
-          },
-        ],
-        'LineChartData'
-      );
+      this.api.exportExcelData(this.lineChartValues, 'LineChartData');
       this.api.showHideSpinner = false;
     }, 1000);
   }

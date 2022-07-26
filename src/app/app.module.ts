@@ -9,6 +9,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { ApiService } from './services/api.service';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [AppComponent, DashboardComponent],
@@ -19,6 +20,7 @@ import { ApiService } from './services/api.service';
     MatToolbarModule,
     MatButtonModule,
     MatProgressBarModule,
+    HttpClientModule,
   ],
   providers: [ApiService],
   bootstrap: [AppComponent],
