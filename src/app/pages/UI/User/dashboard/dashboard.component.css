@@ -1,0 +1,60 @@
+.chartsWrapper {
+  width: 100%;
+  height: 100vh;
+}
+
+.chartsWrapper .barChart {
+  height: 70% !important;
+  width: 100% !important;
+}
+.chartsWrapper .pieChart {
+  height: 100% !important;
+  width: 100% !important;
+}
+
+.chartsWrapper .lineChart {
+  height: 100% !important;
+  width: 100% !important;
+}
+
+.chartsWrapper .lineMainWrapper {
+  display: flex;
+  justify-content: center;
+}
+
+.lineMainWrapper .lineChartView {
+  width: 60%;
+  height: 60%;
+}
+
+@media (max-width: 991px) {
+  .container {
+    max-width: 800px !important;
+  }
+  .lineMainWrapper .lineChartView {
+    width: 80%;
+    height: 80%;
+  }
+}
+@media (max-width: 760px) {
+  .chartsWrapper .barChart {
+    height: 90% !important;
+    width: 100% !important;
+  }
+}
+@media (max-width: 561px) {
+  .lineMainWrapper .lineChartView {
+    width: 90%;
+    height: 100%;
+  }
+}
+@media (max-width: 424px) {
+  .chartsWrapper .barChart {
+    height: 100% !important;
+    width: 100% !important;
+  }
+  .lineMainWrapper .lineChartView {
+    width: 100%;
+    height: 100%;
+  }
+}
